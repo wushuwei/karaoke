@@ -19,15 +19,27 @@ def convert_audio_to_wav(audio_file, file_type):
 def load_audio(audio_file):
     audio = AudioSegment.from_file(audio_file, format="wav")
     samples = np.array(audio.get_array_of_samples()).astype(np.float32)
+    # samples = np.array(audio.get_array_of_samples())
+    # if torch.cuda.is_available():
+    #     torch.cuda.empty_cache()
     return torch.tensor(samples)
 
 # Function to recognize speech using Whisper
 def recognize_speech_whisper(audio_file):
     # Check if a GPU is available
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    # model = whisper.load_model("base")
-    model = whisper.load_model("medium", device=device)
+    # device = "cpu"
+    # model = whisper.load_model("tiny", device=device)
+    model = whisper.load_model("base", device=device)
+    # model = whisper.load_model("small.en", device=device)
+    # model = whisper.load_model("medium", device=device)
     audio = load_audio(audio_file)
+
+    # Model Synchronization: Ensure your model and data are correctly moved to the GPU or CPU
+    model = model.to(device)
+    audio = audio.to(device)
+
+
     # result = model.transcribe(audio)
     result = model.transcribe(audio, language='en')
     return result['text']
@@ -41,6 +53,10 @@ if uploaded_file is not None:
     st.audio(uploaded_file, format=f'audio/{file_type}')
     
     if st.button("Generate Lyrics"):
+        if torch.cuda.is_available():
+            # st.write("use gpu for torch")
+            print("use gpu for torch")
         wav_file = convert_audio_to_wav(uploaded_file, file_type)
         lyrics = recognize_speech_whisper(wav_file)
         st.write(lyrics)
+        print(lyrics)
