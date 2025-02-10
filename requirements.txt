@@ -3,3 +3,4 @@ pydub
 streamlit
 speechrecognition
 transformers!=4.39.0,!=4.39.1,!=4.39.2,!=2019.12.17
+torch

@@ -5,6 +5,9 @@ import whisper
 import torch
 import numpy as np
 
+
+
+
 # Function to convert audio to WAV
 def convert_audio_to_wav(audio_file, file_type):
     audio = AudioSegment.from_file(audio_file, format=file_type)
@@ -20,8 +23,10 @@ def load_audio(audio_file):
 
 # Function to recognize speech using Whisper
 def recognize_speech_whisper(audio_file):
+    # Check if a GPU is available
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     # model = whisper.load_model("base")
-    model = whisper.load_model("medium")
+    model = whisper.load_model("medium", device=device)
     audio = load_audio(audio_file)
     # result = model.transcribe(audio)
     result = model.transcribe(audio, language='en')
