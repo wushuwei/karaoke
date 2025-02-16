@@ -5,6 +5,7 @@ import whisper
 import torch
 import numpy as np
 import tempfile
+import os
 
 
 
@@ -93,3 +94,6 @@ if uploaded_file is not None:
 
         st.write(lyrics)
         print(lyrics)
+
+        # Clean up the temporary file
+        os.remove(temp_wav_file_path)

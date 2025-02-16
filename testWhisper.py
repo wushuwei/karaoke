@@ -2,6 +2,7 @@ import argparse
 import whisper
 import sys
 import torch
+import os
 
 
 # Parse command line arguments
@@ -33,3 +34,4 @@ result = model.transcribe(audio_path)
 
 # Print the transcription
 print(result["text"])
+
