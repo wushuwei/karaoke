@@ -54,6 +54,15 @@ def saveToTempFile(audio_file):
         temp_file_path = temp_file.name
     return temp_file_path
 
+def saveWavBytesTOToTempFile(wav_audio):
+    temp_wav_file_path = ""
+    # Saving the WAV audio to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_wav_file:
+        temp_wav_file.write(wav_audio.getvalue())
+        temp_wav_file_path = temp_wav_file.name
+    return temp_wav_file_path
+
+
 def transcribeFile(local_file_path, model):
     # Transcribe the audio
     result = model.transcribe(local_file_path)
@@ -68,16 +77,18 @@ if uploaded_file is not None:
     st.audio(uploaded_file, format=f'audio/{file_type}')
     
     if st.button("Generate Lyrics"):
-        # if torch.cuda.is_available():
-            # st.write("use gpu for torch")
-            # print("use gpu for torch")
-        # wav_file = convert_audio_to_wav(uploaded_file, file_type)
-        # wav_file = uploaded_file
-        # lyrics = recognize_speech_whisper(wav_file)
+        if torch.cuda.is_available():
+            print("use gpu for torch")
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model = whisper.load_model("base", device=device)
-        lyrics = transcribeFile(local_file_path=saveToTempFile(uploaded_file), model=model)
+        
+        wav_audio = convert_audio_to_wav(uploaded_file, file_type)
+        temp_wav_file_path = saveWavBytesTOToTempFile(wav_audio)
+        print(f"The WAV file is saved at: {temp_wav_file_path}")
+
+        # lyrics = transcribeFile(local_file_path=saveToTempFile(uploaded_file), model=model)
+        lyrics = transcribeFile(local_file_path=temp_wav_file_path, model=model)
 
         st.write(lyrics)
         print(lyrics)
