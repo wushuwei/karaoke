@@ -30,6 +30,7 @@ def recognize_speech_whisper(audio_file):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     # device = "cpu"
     # model = whisper.load_model("tiny", device=device)
+    #small.en, tiny, medium.en
     model = whisper.load_model("base", device=device)
     # model = whisper.load_model("small.en", device=device)
     # model = whisper.load_model("medium", device=device)
